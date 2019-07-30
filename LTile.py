@@ -7,7 +7,7 @@ class LTile:
     Requires that n is a power of 2
     Finds a placement of L-shaped tiles on an n by n grid with one tile missing, renders a gif
     """
-    def __init__(self, n, missing, gif_step=1, gif_speed=30):
+    def __init__(self, size, missing, gif_step=1, gif_speed=30):
         self.counter = 0
         self.tiles = [[0 for y in range(n)] for x in range(n)]
         self.missing = missing
@@ -15,7 +15,7 @@ class LTile:
         self.colors[0] = (0, 0, 0)
         self.images = []
         self.gif_step = gif_step
-        self.size = n
+        self.size = size
         self.gif_speed = gif_speed
 
     def solve(self):
@@ -62,20 +62,19 @@ class LTile:
             self.images.append(self.render())
 
     def render(self):
-        n = len(self.tiles)
-        im = Image.new('RGB', (n, n), 'white')
+        im = Image.new('RGB', (self.size, self.size), 'white')
         pixels = im.load()
-        for x in range(n):
-            for y in range(n):
+        for x in range(self.size):
+            for y in range(self.size):
                 pixels[x, y] = self.colors[self.tiles[x][y]]
         waldo = Image.open('waldo.jpg').resize((20, 20))
-        im = im.resize((n * 20, n * 20))
+        im = im.resize((self.size * 20, self.size * 20))
         im.paste(waldo,
                  (self.missing[0] * 20, self.missing[1] * 20, self.missing[0] * 20 + 20, self.missing[1] * 20 + 20))
         return im
 
 
-# careful with this, the gif filesizes can explode
+# careful with this, the gif file sizes can explode
 n = 2 ** 3
 tile = LTile(n, tuple(np.random.choice(range(n), size=2)), gif_speed=300)
 tile.solve()
